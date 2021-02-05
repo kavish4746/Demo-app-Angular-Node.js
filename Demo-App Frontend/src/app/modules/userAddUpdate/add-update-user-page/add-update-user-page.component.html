@@ -1,0 +1,35 @@
+<div class="titleDiv" *ngIf="addbtnFlag">
+    <span class="titlemain">Add New User Details</span>
+</div>
+<div class="titleDiv" *ngIf="updatebtnFlag">
+    <span class="titlemain">Update User Details</span>
+</div>
+<hr class="hr-1">
+<mat-card > 
+    <form  #f="ngForm">
+        <mat-form-field class="example-full-width">
+              <mat-label>Name</mat-label>
+              <input required name="name" [(ngModel)]="name" #nameEr="ngModel" matInput >
+        </mat-form-field>
+        <div [hidden]="nameEr.valid || nameEr.untouched">
+            <div [hidden]="!nameEr?.errors?.required"></div>
+            <mat-error>Name is required*</mat-error>
+        </div>
+          
+        <mat-form-field class="example-full-width">
+            <mat-label>Email</mat-label>
+            <input required name="email" #emailEr="ngModel" type="email" [(ngModel)]="email" matInput >
+        </mat-form-field>
+        <div [hidden]="emailEr.valid || emailEr.untouched">
+            <div [hidden]="!emailEr?.errors?.required"></div>
+            <mat-error>Email is required*</mat-error>
+        </div>
+                
+        <input (change)="onChange($event)" name="img" type="file" >
+
+    </form>
+    <br><br>
+    <button [disabled]="!f.valid" *ngIf="addbtnFlag"  mat-raised-button (click)="adduser()" color="accent">Add New user</button><br>
+    <button [disabled]="!f.valid" *ngIf="updatebtnFlag"  mat-raised-button (click)="updateuser()" color="accent">Update user</button>
+    <button  mat-raised-button (click)="onclickcancel()" color="accent">Cancel</button>
+</mat-card>
