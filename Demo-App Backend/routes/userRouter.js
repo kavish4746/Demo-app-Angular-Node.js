@@ -40,13 +40,17 @@ router.get("/:id", (req, res) => {
 });
 
 router.post("", upload.single("img"), (req, res) => {
-  user.addnewUser(req.body, req.file.filename, (err, rows) => {
-    if (err) {
-      res.json(err);
-    } else {
-      res.json(rows);
-    }
-  });
+  if (/^[a-zA-Z0-9]*$/.test(req.body.name) == false) {
+    res.status(602).send("Please Dont use special character");
+  } else {
+    user.addnewUser(req.body, req.file.filename, (err, rows) => {
+      if (err) {
+        res.json(err);
+      } else {
+        res.json(rows);
+      }
+    });
+  }
 });
 
 router.delete("/:id", (req, res) => {

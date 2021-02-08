@@ -13,9 +13,13 @@ export class HttpErrorService implements HttpInterceptor {
         return next.handle(req).pipe(
           catchError(err => {
               console.log(err);
-              let errorMessage=`${err.status} : Invalid HTTP Request, Please Try Again !!!`;
+              let errorMessage = `${err.status} : Invalid HTTP Request, Please Try Again !!!`;
+              if (err.status === 602)
+              {
+                  errorMessage = `${err.status} : Please Dont use Any special Character`;
+              }
               window.alert(errorMessage);
-              return throwError("Invalid HTTP Request, Please Try Again !!!");
+              return throwError('Invalid HTTP Request, Please Try Again !!!');
           })
         );
   }

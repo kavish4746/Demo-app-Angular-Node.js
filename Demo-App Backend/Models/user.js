@@ -8,6 +8,15 @@ var user = {
       callback
     );
   },
+  addnewUserWithoutIMG: function (item, callback) {
+    console.log(item);
+    let filename = "default_img.png";
+    return db.query(
+      "insert into user_tbl (name,email,img) values (?,?,?)",
+      [item.name, item.email, filename],
+      callback
+    );
+  },
   getAlluser: function (callback) {
     return db.query("select * from user_tbl", callback);
   },

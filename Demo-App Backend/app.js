@@ -8,6 +8,7 @@ var indexRouter = require("./routes/index");
 
 var userRouter = require("./routes/userRouter");
 var userUpdateWithImg = require("./routes/updateUserwithIMG");
+var addnewUserWithoutIMG = require("./routes/AddNewUserWithoutIMG");
 
 var cors = require("cors");
 var app = express();
@@ -27,6 +28,7 @@ app.use("/", indexRouter);
 
 app.use("/user", userRouter);
 app.use("/userUpdateWithImg", userUpdateWithImg);
+app.use("/addnewUserWithoutIMG", addnewUserWithoutIMG);
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));

@@ -43,12 +43,12 @@ img{
     }
     .mat-table .mat-cell:first-child {
         margin-top: 4%;
+        padding:1%;
         border-top: lightseagreen 5px solid;
     }
     img{
         height:20%;
         width:20%;
-        border-radius: 20%;
     }
     .titlemain{
         font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;

@@ -13,7 +13,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { MatProgressBarModule } from '@angular/material/progress-bar'
-
+import {MatSnackBarModule} from '@angular/material/snack-bar'
 
 @NgModule({
   declarations: [],
@@ -30,7 +30,8 @@ import { MatProgressBarModule } from '@angular/material/progress-bar'
     MatPaginatorModule,
     MatSortModule,
     MatTableModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    MatSnackBarModule
   ],
   exports:[
     CommonModule,
@@ -46,7 +47,8 @@ import { MatProgressBarModule } from '@angular/material/progress-bar'
     MatPaginatorModule,
     MatSortModule,
     MatTableModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    MatSnackBarModule
   ]
 })
 export class SharedModule { }

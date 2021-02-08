@@ -1,8 +1,9 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 import { MatPaginator} from '@angular/material/paginator';
 import { MatTableDataSource} from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { UserService } from '../../../core/services/user/user.service';
 import { userClass } from '../../../Shared/Classes/userClass';
 import { LoaderService } from '../../../core/services/loader/loader.service';
@@ -21,7 +22,10 @@ export class UsersComponent implements OnInit {
   userArr: userClass[] = [];
   endPoint: string = url.endPoint;
 
-  constructor(private serviceOb: UserService, private routeOb: Router, public loaderService: LoaderService) { }
+  constructor(private serviceOb: UserService,
+              private routeOb: Router,
+              public loaderService: LoaderService,
+              private snackBar: MatSnackBar) { }
 
   displayedColumns: string[] = ['img', 'Name', 'Email', 'action'];
   dataSource = new MatTableDataSource(this.userArr);
@@ -35,7 +39,11 @@ export class UsersComponent implements OnInit {
     this.routeOb.navigate(['addupdateuser']);
   }
 
-  onDeleteUser(item){
+  onupdateUser(item: { id: number; }){
+    this.routeOb.navigate(['addupdateuser', {id: item.id}]);
+  }
+
+  onDeleteUser(item: userClass){
     console.log(item.id);
     if (confirm('Are you sure to delete ' + item.name + ' ?')) {
     this.serviceOb.deleteUser(item.id).subscribe(
@@ -47,33 +55,24 @@ export class UsersComponent implements OnInit {
             this.userArr.splice(i, 1);
           }
         }
+        this.snackBar.open('User Deleted Successfully', 'Dismiss');
         this.dataSource = new MatTableDataSource(this.userArr);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.Sort;
-      }, error => {
-        const errorMessage = `${error.status} Please Try Again aftersometime !!!`;
-        window.alert(errorMessage);
       }
     );
     }
-  }
-
-  onupdateUser(item){
-    this.routeOb.navigate(['addupdateuser', {id: item.id}]);
   }
 
   ngOnInit(): void {
     this.dataSource = null;
     this.serviceOb.getAllUser().subscribe(
       (data: any) => {
-        this.userArr=data;
+        this.userArr = data;
         this.dataSource = new MatTableDataSource(this.userArr);
         console.log(this.dataSource);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.Sort;
-      }, error => {
-        const errorMessage = `${error.status} Could Not fetch data,Please Try or Refresh this page!!!`;
-        window.alert(errorMessage);
       }
     );
   }
