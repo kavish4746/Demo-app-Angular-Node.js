@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { UserService } from '../../../core/services/user/user.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { userClass } from '../../../Shared/Classes/userClass';
-import { throwError } from 'rxjs';
 
 @Component({
   selector: 'app-add-update-user-page',
@@ -10,21 +9,15 @@ import { throwError } from 'rxjs';
   styleUrls: ['./add-update-user-page.component.css']
 })
 export class AddUpdateUserPageComponent implements OnInit {
-
-  name: string;
-  email: string;
   selectedFile: File = null;
-  img: string;
-  id: number;
-  addbtnFlag:boolean = false;
-  updatebtnFlag:boolean = false;
-  userArr: userClass[] = [];
+  addbtnFlag = false;
+  updatebtnFlag = false;
+  userObj = {} as userClass;
 
+  constructor(private serviceObj: UserService, private routeOb: Router,
+              private acrouteOb: ActivatedRoute) { }
 
-  constructor(private _service: UserService, private _route: Router, 
-              private _acroute: ActivatedRoute) { }
-  
-  onChange(value)
+  onChange(value: { target: { files: File[]; }; })
   {
     this.selectedFile = (value.target.files[0] as File);
   }
@@ -32,21 +25,24 @@ export class AddUpdateUserPageComponent implements OnInit {
   adduser(){
     if (this.selectedFile === null)
     {
-      this.userArr.push(new userClass(this.name, this.email, this.img));
-      this._service.adduserWithDefaultIMG(this.userArr[0]).subscribe((data: userClass) => {
-        console.log(data);
-        this._route.navigate(['/']);
+      this.serviceObj.adduserWithDefaultIMG(this.userObj).subscribe(() => {
+        this.routeOb.navigate(['/']);
+      }, error => {
+        const errorMessage = `${error.status} Error occured:, Please Try Again !!!`;
+        window.alert(errorMessage);
       });
     }
     else
     {
       const fd = new FormData();
-      fd.append('name', this.name);
-      fd.append('email', this.email);
+      fd.append('name', this.userObj.name.toString());
+      fd.append('email', this.userObj.email.toString());
       fd.append('img', this.selectedFile, this.selectedFile.name);
-      this._service.adduser(fd).subscribe((data: userClass) => {
-         console.log(data);
-         this._route.navigate(['/']);
+      this.serviceObj.adduser(fd).subscribe(() => {
+         this.routeOb.navigate(['/']);
+       }, error => {
+        const errorMessage = `${error.status} Error occured:, Please Try Again !!!`;
+        window.alert(errorMessage);
        });
     }
 
@@ -55,47 +51,48 @@ export class AddUpdateUserPageComponent implements OnInit {
   updateuser(){
     if (this.selectedFile == null)
     {
-        this.userArr.push(new userClass(this.name, this.email, this.img, this.id));
-        this._service.updateuserWithoutIMG(this.userArr[0]).subscribe((data: userClass) => {
+        this.serviceObj.updateuserWithoutIMG(this.userObj).subscribe((data: userClass) => {
           console.log(data);
-          this._route.navigate(['/']);
+          this.routeOb.navigate(['/']);
         }, err => {
-            console.log(err);
-        }, () => {
+          const errorMessage = `${err.status} Error while updating user,please Try Again`;
+          window.alert(errorMessage);
         });
     }
     else
     {
         const fd = new FormData();
-        fd.append('id', this.id.toString());
-        fd.append('name', this.name);
-        fd.append('email', this.email);
+        fd.append('id', this.userObj.id.toString());
+        fd.append('name', this.userObj.name.toString());
+        fd.append('email', this.userObj.email.toString());
         fd.append('img', this.selectedFile, this.selectedFile.name);
-        this._service.userUpdateWithImg(fd).subscribe((data: userClass) => {
-            this._route.navigate(['/']);
-        },err=>{
-          throwError(err);
+        this.serviceObj.userUpdateWithImg(fd).subscribe((data: userClass) => {
+            this.routeOb.navigate(['/']);
+        }, err => {
+          const errorMessage = `${err.status} Error while updating user,please Try Again`;
+          window.alert(errorMessage);
         });
     }
   }
 
   onclickcancel(){
-    this._route.navigate(['/']);
+    this.routeOb.navigate(['/']);
   }
   ngOnInit(): void {
-    let checkUrl=this._route.url;
+    const checkUrl = this.routeOb.url;
     if (checkUrl !== '/addupdateuser')
     {
-      this.id = this._acroute.snapshot.params.id;
-      console.log(this.id);
+      this.userObj.id = this.acrouteOb.snapshot.params.id;
+      console.log(this.userObj.id);
       this.updatebtnFlag = true;
       this.addbtnFlag = false;
-      this._service.getUserbyId(this.id).subscribe((data: userClass) => {
-          this.name = data[0].name;
-          this.email = data[0].email;
-          this.img = data[0].img;
-      },err=>{
-        console.log(err);
+      this.serviceObj.getUserbyId(this.userObj.id).subscribe((data: userClass) => {
+          this.userObj.name = data[0].name;
+          this.userObj.email = data[0].email;
+          this.userObj.img = data[0].img;
+      }, err => {
+        const errorMessage = `${err.status} Could not Get User Data`;
+        window.alert(errorMessage);
       });
     }
     else

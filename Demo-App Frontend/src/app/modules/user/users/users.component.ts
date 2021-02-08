@@ -21,8 +21,7 @@ export class UsersComponent implements OnInit {
   userArr: userClass[] = [];
   endPoint: string = url.endPoint;
 
-  constructor(private _service: UserService, private _route: Router,
-              private _acroute: ActivatedRoute, public _loaderService: LoaderService) { }
+  constructor(private serviceOb: UserService, private routeOb: Router, public loaderService: LoaderService) { }
 
   displayedColumns: string[] = ['img', 'Name', 'Email', 'action'];
   dataSource = new MatTableDataSource(this.userArr);
@@ -33,15 +32,14 @@ export class UsersComponent implements OnInit {
   }
 
   adduser(){
-    this._route.navigate(['addupdateuser']);
+    this.routeOb.navigate(['addupdateuser']);
   }
 
   onDeleteUser(item){
     console.log(item.id);
     if (confirm('Are you sure to delete ' + item.name + ' ?')) {
-    this._service.deleteUser(item.id).subscribe(
-      (data: any) => {
-        console.log('Deleted');
+    this.serviceOb.deleteUser(item.id).subscribe(
+      () => {
         for (let i = 0; i < this.userArr.length; i++)
         {
           if (this.userArr[i].id === item.id)
@@ -53,27 +51,29 @@ export class UsersComponent implements OnInit {
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.Sort;
       }, error => {
-        console.log(`Error while Deleting the data ${error}`);
+        const errorMessage = `${error.status} Please Try Again aftersometime !!!`;
+        window.alert(errorMessage);
       }
     );
     }
   }
 
   onupdateUser(item){
-    this._route.navigate(['addupdateuser', {id: item.id}]);
+    this.routeOb.navigate(['addupdateuser', {id: item.id}]);
   }
 
   ngOnInit(): void {
     this.dataSource = null;
-    this._service.getAllUser().subscribe(
+    this.serviceOb.getAllUser().subscribe(
       (data: any) => {
-        console.log(data);
-        this.userArr = data;
-        this.dataSource = new MatTableDataSource(data);
+        this.userArr=data;
+        this.dataSource = new MatTableDataSource(this.userArr);
+        console.log(this.dataSource);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.Sort;
       }, error => {
-        console.log(`Error while fetching the data ${error}`);
+        const errorMessage = `${error.status} Could Not fetch data,Please Try or Refresh this page!!!`;
+        window.alert(errorMessage);
       }
     );
   }
